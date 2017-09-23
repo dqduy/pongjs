@@ -1,15 +1,9 @@
 ﻿# pongjs
 A pong game in JS with PixiJS
 
-
-----------
-
-
 ## Demo
 
 > http://supervisor-fifths-83501.bitballoon.com/
-
-----------
 
 ## Tools
 
