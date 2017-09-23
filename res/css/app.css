@@ -1,0 +1,39 @@
+@font-face {
+    font-family: Starcraft;
+    src: url("starcraft.ttf");
+}
+
+body {
+    margin: 0;
+    background: url("../images/backlight.png")
+}
+
+#app_all {
+    
+}
+
+#app_header {
+    text-align: center;
+    padding: 32px  0 8px 0
+}
+
+#app_content {
+    text-align: center;
+}
+
+#app_footer {
+    text-align: center;
+    padding-top: 16px
+}
+
+.header_text {
+    color: #3abf40;
+    font-family: Starcraft, Serif;
+    font-size: 5em;
+}
+
+.footer_text {
+    color: #3abf40;
+    font-family: Starcraft, Serif;
+    font-size: 1em;
+}
