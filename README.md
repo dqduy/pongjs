@@ -14,6 +14,6 @@ A pong game in JS with PixiJS
 ## How to build
 Change to project directory and run command:
 
-    make.bat
+> make.bat
 
 Release folder is output in current directory
