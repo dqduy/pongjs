@@ -4,7 +4,7 @@ class Application {
     setup() {
         var context = new PIXI.Application(800, 500, {backgroundColor : 0x1099bb});
         
-        Game.getInstance().setContext(context);        
+        Game.getInstance().init(context, new AppConfig());        
         document.getElementById("app_content").appendChild(context.view);
         
         //Active keyboard event to the canvas

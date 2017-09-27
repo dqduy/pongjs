@@ -2,6 +2,7 @@ class Game {
     constructor() {
         this.instance = null;
         this.context = null;
+        this.appConfig = null;
         
         this.winPoint = 4;
         this.scores = [0, 0];
@@ -17,8 +18,13 @@ class Game {
         return this.instance;
     }    
     
-    setContext(context) {
+    init(context, config) {
         this.context = context;
+        this.appConfig = config;
+    }
+    
+    setContext(context) {
+        
     }
     
     getContext() {

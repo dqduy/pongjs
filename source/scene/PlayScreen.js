@@ -199,11 +199,14 @@ class PlayScreen extends Scene {
         var app = Game.getInstance().getContext(); 
         
         //Add a ball
-        this.ball = PIXI.Sprite.fromImage("images/ball.png");
+        //this.ball = PIXI.Sprite.fromImage("images/ball.png");
+        this.ball = new Ball();
         this.ball.width = 24;
         this.ball.height = 24;
         this.ball.x = 50;
         this.ball.y = 250;
+        
+        
         
         //Add 2 users to the game
         this.homeUser = PIXI.Sprite.fromImage("images/axe.png");
