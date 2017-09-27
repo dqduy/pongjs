@@ -27,14 +27,21 @@ def path_leaf(path):
     head, tail = ntpath.split(path)
     return tail or ntpath.basename(head)
     
+def print_dir():
+    for path in src:
+        print path
+    
 def process():
     #List all files in source game
     scandir(srcdir, src)
     scandir(resdir, res)
-
+    
+    #Test all path
+    print_dir()
+    
     #Create destination source
     str = ""
-    tmpArr = ["", "", "", "", "", "", ""];
+    tmpArr = ["", "", "", "", "", "", "", "", "", "", ""];
     
     for script in src:        
         #Combine all script to one file
@@ -43,20 +50,28 @@ def process():
         ext = os.path.splitext(fullname)[1]
         #print name +  " - " + ext
         
-        if name == "Scene":
+        if name == "AppConfig":
             tmpArr[0] = script
-        elif name == "MainScreen":
+        elif name == "Utils":
             tmpArr[1] = script
-        elif name == "PlayScreen":
+        elif name == "Ball":
             tmpArr[2] = script
-        elif name == "PauseScreen":
+        elif name == "Player":
             tmpArr[3] = script
-        elif name == "SceneManager":
-            tmpArr[4] = script
-        elif name == "Game":
+        elif name == "Scene":
+            tmpArr[4] = script            
+        elif name == "MainScreen":
             tmpArr[5] = script
-        elif name == "Application":
+        elif name == "PlayScreen":
             tmpArr[6] = script
+        elif name == "PauseScreen":
+            tmpArr[7] = script
+        elif name == "SceneManager":
+            tmpArr[8] = script
+        elif name == "Game":
+            tmpArr[9] = script
+        elif name == "Application":
+            tmpArr[10] = script
         else: 
             shutil.copy2(script, outputdir + "\\")
         # if os.path.splitext(script)[1] != ".html":

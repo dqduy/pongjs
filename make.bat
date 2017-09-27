@@ -4,7 +4,7 @@ echo ==============================================
 echo            PONG GAME
 echo ==============================================
 
-set PYTHON_HOME=F:\DevTools\Python27
+set PYTHON_HOME=H:\DevTools\Python27
 
 set CUR_DIR=%~dp0
 set SRC_DIR=%CUR_DIR%source

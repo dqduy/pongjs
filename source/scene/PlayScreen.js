@@ -4,27 +4,71 @@ class PlayScreen extends Scene {
         
         //Member Variables
         this.ball = null;
-        this.lines = [];
         this.homeUser = null;
         this.awayUser = null;
         this.homeResult = null;
         this.awayResult = null;
-        this.velocity = [4, 3];
+        this.lines = [];
+        
         //Member Functions
         this.setup();
     }
     
     onKeyUp(event) { 
-        if(event.keyCode == 27) {  //Esc
+        switch(event.keyCode) {
+            case 27:    //Esc
+                console.log("PlayScreen Up");
+                Game.getInstance().gameState = "pausing";
+                this.saveState();
+                SceneManager.getInstance().setScene(new PauseScreen());
+                break;
+            case 81:    //Q
+                if(!this.homeUser.auto)
+                    this.homeUser.stopMovingUp();
+                break;
+            case 65:    //A
+                if(!this.homeUser.auto)
+                    this.homeUser.stopMovingDown();
+                break;
+            case 80:    //P
+                if(!this.awayUser.auto)
+                    this.awayUser.stopMovingUp();
+                break;
+            case 76:    //L
+                if(!this.awayUser.auto)
+                    this.awayUser.stopMovingDown();
+                break;
+                
+        }
+        /* if(event.keyCode == 27) {  //Esc
             console.log("PlayScreen Up");
             Game.getInstance().gameState = "pausing";
             this.saveState();
             SceneManager.getInstance().setScene(new PauseScreen());
-        }
+        } */
     }
     
     onKeyDown(event) {
-        if(event.keyCode == 81) {         //Q
+        switch(event.keyCode) {
+            case 81:    //Q
+                if(!this.homeUser.auto)
+                    this.homeUser.moveUp();
+                break;
+            case 65:    //A
+                if(!this.homeUser.auto)
+                    this.homeUser.moveDown();
+                break;
+            case 80:    //P
+                if(!this.awayUser.auto)
+                    this.awayUser.moveUp();
+                break;
+            case 76:    //L
+                if(!this.awayUser.auto)
+                    this.awayUser.moveDown();
+                break;
+                
+        }
+        /* if(event.keyCode == 81) {         //Q
             if(this.homeUser.y > 0)
                 this.homeUser.y -= 30;
             else this.homeUser.y = 0;
@@ -37,7 +81,7 @@ class PlayScreen extends Scene {
         else if(event.keyCode == 80)   //P
             this.awayUser.y -= 30;
         else if(event.keyCode == 76)   //L
-            this.awayUser.y += 30;
+            this.awayUser.y += 30; */
     }
     
     saveState() {
@@ -70,92 +114,34 @@ class PlayScreen extends Scene {
         app.stage.removeChild(this.awayResult);
     }
     
-    update(delta) { 
-        this.updateBallPosition(delta);
-        this.checkCollisions();
+    level(playerNo) {
+        return 8 + (Game.getInstance().scores[playerNo] - Game.getInstance().scores[playerNo ? 0 : 1]);
+    }
+    
+    goal(playerNo) {
+        Game.getInstance().scores[playerNo]++;
         
-        if(Game.getInstance().gameMode == "single") {
-            if (this.awayUser.y < this.ball.y) {
-                this.move(delta, 1);
-            } else if (this.awayUser.y > this.ball.y) {
-                this.move(delta, -1);
-            }
-        }    
+        this.ball.reset(playerNo);
+        this.homeUser.setLevel(this.level(0));
+        this.awayUser.setLevel(this.level(1));
     }
     
-    updateBallPosition(delta) {
-        this.ball.x += this.velocity[0] * delta;
-        this.ball.y += this.velocity[1] * delta;
-    }
-    
-    checkCollisions() {
-        //Walls
-        if(this.checkWallsCollision())
-            return true;
-
-        //Players
-        if(this.checkPlayersCollision()) 
-            return true;
-        
-        return false;        
-    }
-    
-    checkWallsCollision() {
-        if(this.ball.y < 0) {
-            this.bounce(0, 1);
-        } else if(this.ball.y > 500 - 24) {
-            this.bounce(0, -1);
-        } else if(this.ball.x < 0) {
-            Game.getInstance().scores[1]++;
-            this.reset();
-        } else if(this.ball.x > 800 - 24) {
-            Game.getInstance().scores[0]++;
-            this.reset();
-        } else return false;
-    }
-    
-    checkPlayersCollision() {
-        var homeRect = {left: this.homeUser.x, top: this.homeUser.y, right: this.homeUser.x + this.homeUser.width, bottom: this.homeUser.y + this.homeUser.height};
-        var awayRect = {left: this.awayUser.x, top: this.awayUser.y, right: this.awayUser.x + this.awayUser.width, bottom: this.awayUser.y + this.awayUser.height};
-        var ballRect = {left: this.ball.x, top: this.ball.y, right: this.ball.x + this.ball.width, bottom: this.ball.y + this.ball.height};
-
-        if(this.intersectRect(ballRect, homeRect)) {
-            this.bounce(1, 0);
-            this.ball.x += 24;
-        } else if(this.intersectRect(ballRect, awayRect)) {
-            this.bounce(-1, 0);
-            this.ball.x -= 12;
-        }         
-        return true;  
-    }
-    
-    move(delta, direction) {
-        var distance = delta * 4,
-        stageHeight = 500,
-        newY;
-
-        newY = this.awayUser.y + distance * direction;
-
-        if (newY > stageHeight / 2 - this.awayUser.height / 2) {
-            newY = stageHeight / 2 - this.awayUser.height / 2;
-        } else if (newY < -stageHeight / 2 + this.awayUser.height / 2) {
-            newY = -stageHeight / 2 + this.awayUser.height / 2;
+    update(delta) {         
+        //if(Game.getInstance().gameMode == "single") {
+            
+        //} 
+        this.homeUser.update(delta, this.ball);
+        this.awayUser.update(delta, this.ball);
+        if(Game.getInstance().gameState == "playing") {
+            var dx = this.ball.dx;
+            var dy = this.ball.dy;
+            this.ball.update(delta, this.homeUser, this.awayUser);
+            if(this.ball.left > Game.getInstance().appConfig.appWidth)
+                this.goal(0);
+            else if(this.ball.right < 0)
+                this.goal(1);
         }
-        this.awayUser.y = newY;
-    }
-    
-    bounce(mulX, mulY) {
-        if(mulX)
-            this.velocity[0] = Math.abs(this.velocity[0]) * mulX;
-        if(mulY)
-            this.velocity[1] = Math.abs(this.velocity[1]) * mulY;
-    }
-    
-    intersectRect(r1, r2) {
-        return !(r2.left > r1.right || 
-           r2.right < r1.left || 
-           r2.top > r1.bottom ||
-           r2.bottom < r1.top);
+        
     }
     
     reset() {
@@ -200,26 +186,32 @@ class PlayScreen extends Scene {
         
         //Add a ball
         //this.ball = PIXI.Sprite.fromImage("images/ball.png");
-        this.ball = new Ball();
+        this.ball = new Ball(Game.getInstance().appConfig.ballRes);
         this.ball.width = 24;
         this.ball.height = 24;
-        this.ball.x = 50;
-        this.ball.y = 250;
-        
-        
+        //this.ball.x = 50;
+        //this.ball.y = 250;
         
         //Add 2 users to the game
-        this.homeUser = PIXI.Sprite.fromImage("images/axe.png");
-        this.homeUser.width = 48;
-        this.homeUser.height = 72;
-        this.homeUser.x = 0;
-        this.homeUser.y = 0;
+        //this.homeUser = PIXI.Sprite.fromImage("images/axe.png");
+        this.homeUser = new Player(Game.getInstance().appConfig.leftPlayerRes);
+        //this.homeUser.width = 48;
+        //this.homeUser.height = 72;
+        //this.homeUser.x = 0;
+        //this.homeUser.y = 0;
         
-        this.awayUser = PIXI.Sprite.fromImage("images/axe.png");
-        this.awayUser.width = 48;
+        //this.awayUser = PIXI.Sprite.fromImage("images/axe.png");
+        this.awayUser = new Player(Game.getInstance().appConfig.leftPlayerRes, true);
+        /* this.awayUser.width = 48;
         this.awayUser.height = 72;
         this.awayUser.x = app._options.width - 48;
-        this.awayUser.y = 0;
+        this.awayUser.y = 0; */
+        
+        
+        //
+        this.homeUser.setAuto(1 < 1, this.level(0));
+        this.awayUser.setAuto(1 < 2, this.level(1));
+        this.ball.reset();
         
         //Add to game canvas
         app.stage.addChild(this.homeUser);
@@ -232,7 +224,7 @@ class PlayScreen extends Scene {
         var stickHeight = 24;
         var rulerHeight = 500;
         var rulerHeightPadding = 10;
-        var rulerPattern = "images/stick.png";
+        var rulerPattern = Game.getInstance().appConfig.stickRes;
         var xOrigin = 398;
         var yOrigin = 0;
         

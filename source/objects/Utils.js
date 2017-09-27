@@ -66,4 +66,8 @@ class Utils {
       return pt;        
     }
     
+    static random(min, max) {
+        return (min + (Math.random() * (max - min)));
+    }
+    
 }
